@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عيد ميلاد سعيد يا أمي!</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #ffebee;
+            padding: 20px;
+            color: #d32f2f;
+            overflow-x: hidden;
+        }
+        .card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+        h1 {
+            color: #c2185b;
+            font-size: 28px;
+            opacity: 0;
+        }
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            opacity: 0;
+            margin: 15px 0;
+        }
+        #uploadedImage {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            margin: 15px auto;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        #uploadedImage:hover {
+            transform: scale(1.03);
+        }
+        .upload-btn {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 15px 0;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .upload-btn:hover {
+            background-color: #c2185b;
+            transform: scale(1.05);
+        }
+        .heart {
+            color: #e91e63;
+            font-size: 24px;
+            display: inline-block;
+        }
+        .signature {
+            font-style: italic;
+            margin-top: 20px;
+            opacity: 0;
+        }
+        #imageContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #f44336;
+            opacity: 0;
+            z-index: 10;
+        }
+        .balloon {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            border-radius: 50%;
+            opacity: 0;
+            z-index: -1;
+        }
+        .hidden {
+            display: none;
+        }
+        .upload-instructions {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #c2185b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="upload-instructions">من فضلكِ ارفعي صورتكِ لرؤية المفاجأة!</div>
+        
+        <div id="imageContainer">
+            <img id="uploadedImage" alt="صورة الأم">
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+            <button class="upload-btn" onclick="document.getElementById('imageUpload').click()">
+                رفع صورتك
+            </button>
+        </div>
+        
+        <div id="birthdayContent" class="hidden">
+            <!-- Balloons will be added here by JavaScript -->
+            
+            <h1 id="birthdayTitle">عيد ميلاد سعيد يا أمي! <span class="heart" id="heartIcon">❤️</span></h1>
+            
+            <p id="message1">اليوم هو يوم الاحتفال بكِ - أعظم أم في العالم!</p>
+            
+            <p id="message2">أنتِ محبوبة أكثر مما تستطيع الكلمات التعبير عنه. شكراً لكِ على كل ما تفعلينه!</p>
+            
+            <p id="message3">أتمنى لكِ يوماً مليئاً بالفرح والضحك وكل الأشياء التي تحبينها.</p>
+            
+            <div class="signature" id="signature">بكل حب<br>ابنك احمد</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Hide upload elements
+                    document.querySelector('.upload-instructions').style.display = 'none';
+                    document.querySelector('.upload-btn').style.display = 'none';
+                    
+                    // Show image
+                    const img = document.getElementById('uploadedImage');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    
+                    // Show birthday content
+                    document.getElementById('birthdayContent').classList.remove('hidden');
+                    
+                    // Start animations
+                    startCelebration();
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function startCelebration() {
+            // Create balloons
+            createBalloons();
+            
+            // Create confetti
+            createConfetti();
+            
+            // Animate elements sequentially
+            animateElement(document.getElementById('birthdayTitle'), 0);
+            animateElement(document.getElementById('message1'), 0.5);
+            animateElement(document.getElementById('message2'), 1);
+            animateElement(document.getElementById('message3'), 1.5);
+            animateElement(document.getElementById('signature'), 2);
+            
+            // Add pulse animation to heart
+            document.getElementById('heartIcon').style.animation = 'pulse 1.5s infinite';
+        }
+
+        function animateElement(element, delay) {
+            setTimeout(() => {
+                element.style.animation = 'fadeIn 1s ease-in-out forwards';
+            }, delay * 1000);
+        }
+
+        function createBalloons() {
+            const colors = ['#e91e63', '#2196F3', '#4CAF50', '#FFC107', '#9C27B0', '#00BCD4'];
+            const balloonContainer = document.getElementById('birthdayContent');
+            
+            for (let i = 0; i < 8; i++) {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.style.backgroundColor = colors[i % colors.length];
+                balloon.style.left = Math.random() * 80 + 10 + '%';
+                balloon.style.top = Math.random() * 30 + '%';
+                balloon.style.animation = `float ${Math.random() * 3 + 4}s ease-in-out infinite`;
+                balloon.style.animationDelay = i * 0.3 + 's';
+                balloon.style.opacity = '0.7';
+                balloonContainer.appendChild(balloon);
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', 
+                          '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', 
+                          '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animation = `confetti ${Math.random() * 3 + 2}s linear forwards`;
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
