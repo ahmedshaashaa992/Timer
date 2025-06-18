@@ -3,240 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عيد ميلاد سعيد يا أمي!</title>
+    <title>عيد ميلاد سعيد يا أمي العزيزة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        :root {
+            --primary: #e91e63;
+            --secondary: #9c27b0;
+            --accent: #ff9800;
+            --text: #333;
+            --light-bg: #fff9fa;
         }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        @keyframes confetti {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Arial', sans-serif;
-            text-align: center;
-            background-color: #ffebee;
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, var(--light-bg) 0%, #fce4ec 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text);
             padding: 20px;
-            color: #d32f2f;
             overflow-x: hidden;
         }
+        
         .card {
-            background-color: white;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0.1;
+            z-index: -1;
+            animation: rotate 20s linear infinite;
+        }
+        
+        .upload-container {
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+        
+        .upload-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        #imageWrapper {
+            position: relative;
+            margin: 20px auto;
+            width: 250px;
+            height: 250px;
             border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            max-width: 500px;
-            margin: 0 auto;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 5px solid white;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        #imageWrapper.loaded {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        #uploadedImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 15px 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
-        h1 {
-            color: #c2185b;
-            font-size: 28px;
-            opacity: 0;
-        }
-        p {
-            font-size: 18px;
-            line-height: 1.6;
-            opacity: 0;
-            margin: 15px 0;
-        }
-        #uploadedImage {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 10px;
-            margin: 15px auto;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        #uploadedImage:hover {
-            transform: scale(1.03);
-        }
-        .upload-btn {
-            background-color: #e91e63;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 15px 0;
-            display: inline-block;
-            transition: all 0.3s;
-        }
+        
         .upload-btn:hover {
-            background-color: #c2185b;
-            transform: scale(1.05);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
         }
-        .heart {
-            color: #e91e63;
-            font-size: 24px;
-            display: inline-block;
+        
+        .upload-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
         }
+        
+        .upload-btn:hover::before {
+            left: 100%;
+        }
+        
+        .birthday-content {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
+        .birthday-content.show {
+            opacity: 1;
+            height: auto;
+            margin-top: 30px;
+        }
+        
+        .birthday-title {
+            font-size: 28px;
+            color: var(--primary);
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .birthday-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 3px;
+        }
+        
+        .birthday-message {
+            font-size: 18px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
         .signature {
             font-style: italic;
-            margin-top: 20px;
-            opacity: 0;
+            text-align: left;
+            margin-top: 30px;
+            font-size: 16px;
+            color: var(--secondary);
         }
-        #imageContainer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        
+        .heart {
+            color: var(--primary);
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
         }
+        
         .confetti {
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            background-color: #f44336;
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
             opacity: 0;
-            z-index: 10;
+            z-index: 100;
+            pointer-events: none;
         }
-        .balloon {
+        
+        .floating-elements {
             position: absolute;
-            width: 40px;
-            height: 50px;
-            border-radius: 50%;
-            opacity: 0;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
             z-index: -1;
+            overflow: hidden;
         }
-        .hidden {
-            display: none;
+        
+        .floating-element {
+            position: absolute;
+            opacity: 0.6;
+            animation: float 15s infinite linear;
         }
-        .upload-instructions {
-            font-size: 20px;
-            margin-bottom: 30px;
-            color: #c2185b;
-            font-weight: bold;
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .card { padding: 20px; }
+            .birthday-title { font-size: 24px; }
+            .birthday-message { font-size: 16px; }
+            #imageWrapper { width: 200px; height: 200px; }
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="upload-instructions">من فضلكِ ارفعي صورتكِ لرؤية المفاجأة!</div>
+        <div class="floating-elements" id="floatingElements"></div>
         
-        <div id="imageContainer">
-            <img id="uploadedImage" alt="صورة الأم">
-            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
-            <button class="upload-btn" onclick="document.getElementById('imageUpload').click()">
-                رفع صورتك
+        <div class="upload-container" id="uploadContainer">
+            <h2 class="upload-title">أهلاً بكِ يا أمي العزيزة</h2>
+            <p>من فضلكِ ارفعي صورتكِ لرؤية المفاجأة الخاصة!</p>
+            
+            <div id="imageWrapper">
+                <img id="uploadedImage" alt="صورة الأم">
+            </div>
+            
+            <button class="upload-btn" id="uploadBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                رفع الصورة
             </button>
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
         </div>
         
-        <div id="birthdayContent" class="hidden">
-            <!-- Balloons will be added here by JavaScript -->
+        <div class="birthday-content" id="birthdayContent">
+            <h1 class="birthday-title animate__animated animate__fadeInDown">عيد ميلاد سعيد يا أمي! <span class="heart">❤️</span></h1>
             
-            <h1 id="birthdayTitle">عيد ميلاد سعيد يا أمي! <span class="heart" id="heartIcon">❤️</span></h1>
+            <p class="birthday-message animate__animated animate__fadeIn animate__delay-1s">اليوم هو يومكِ الخاص، يوم الاحتفال بأعظم أم في الوجود!</p>
             
-            <p id="message1">اليوم هو يوم الاحتفال بكِ - أعظم أم في العالم!</p>
+            <p class="birthday-message animate__animated animate__fadeIn animate__delay-2s">حبي لكِ لا يعبر عنه كلمات، شكراً لكل لحظة من الحب والعطاء.</p>
             
-            <p id="message2">أنتِ محبوبة أكثر مما تستطيع الكلمات التعبير عنه. شكراً لكِ على كل ما تفعلينه!</p>
+            <p class="birthday-message animate__animated animate__fadeIn animate__delay-3s">أتمنى لكِ عاماً جديداً مليئاً بالسعادة والصحة والفرح.</p>
             
-            <p id="message3">أتمنى لكِ يوماً مليئاً بالفرح والضحك وكل الأشياء التي تحبينها.</p>
-            
-            <div class="signature" id="signature">بكل حب<br>ابنك احمد</div>
+            <div class="signature animate__animated animate__fadeIn animate__delay-4s">
+                بكل الحب والتقدير،<br>
+                ابنك احمد
+            </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script>
-        document.getElementById('imageUpload').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // Hide upload elements
-                    document.querySelector('.upload-instructions').style.display = 'none';
-                    document.querySelector('.upload-btn').style.display = 'none';
-                    
-                    // Show image
-                    const img = document.getElementById('uploadedImage');
-                    img.src = e.target.result;
-                    img.style.display = 'block';
-                    
-                    // Show birthday content
-                    document.getElementById('birthdayContent').classList.remove('hidden');
-                    
-                    // Start animations
-                    startCelebration();
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create floating elements
+            const floatingContainer = document.getElementById('floatingElements');
+            const shapes = ['❤️', '✨', '🎉', '🎂', '🎁', '🌸'];
+            
+            for (let i = 0; i < 15; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                element.style.left = Math.random() * 100 + '%';
+                element.style.top = Math.random() * 100 + '%';
+                element.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                element.style.animationDelay = Math.random() * 5 + 's';
+                element.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                floatingContainer.appendChild(element);
+            }
+            
+            // Upload functionality
+            const uploadBtn = document.getElementById('uploadBtn');
+            const imageUpload = document.getElementById('imageUpload');
+            const uploadedImage = document.getElementById('uploadedImage');
+            const imageWrapper = document.getElementById('imageWrapper');
+            const uploadContainer = document.getElementById('uploadContainer');
+            const birthdayContent = document.getElementById('birthdayContent');
+            
+            uploadBtn.addEventListener('click', function() {
+                imageUpload.click();
+            });
+            
+            imageUpload.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Show the uploaded image
+                        uploadedImage.src = e.target.result;
+                        imageWrapper.classList.add('loaded');
+                        
+                        // Hide the upload button but keep everything else
+                        uploadBtn.style.display = 'none';
+                        
+                        // Show birthday content below the image
+                        birthdayContent.classList.add('show');
+                        
+                        // Create confetti celebration
+                        createConfetti();
+                        
+                        // Animate each element sequentially
+                        const elements = document.querySelectorAll('.animate__animated');
+                        elements.forEach((el, index) => {
+                            setTimeout(() => {
+                                el.style.opacity = 1;
+                            }, index * 500);
+                        });
+                    };
+                    reader.readAsDataURL(file);
                 }
-                reader.readAsDataURL(file);
+            });
+            
+            function createConfetti() {
+                const colors = ['#e91e63', '#9c27b0', '#2196F3', '#4CAF50', '#FFC107', '#FF5722'];
+                
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }
             }
         });
-
-        function startCelebration() {
-            // Create balloons
-            createBalloons();
-            
-            // Create confetti
-            createConfetti();
-            
-            // Animate elements sequentially
-            animateElement(document.getElementById('birthdayTitle'), 0);
-            animateElement(document.getElementById('message1'), 0.5);
-            animateElement(document.getElementById('message2'), 1);
-            animateElement(document.getElementById('message3'), 1.5);
-            animateElement(document.getElementById('signature'), 2);
-            
-            // Add pulse animation to heart
-            document.getElementById('heartIcon').style.animation = 'pulse 1.5s infinite';
-        }
-
-        function animateElement(element, delay) {
-            setTimeout(() => {
-                element.style.animation = 'fadeIn 1s ease-in-out forwards';
-            }, delay * 1000);
-        }
-
-        function createBalloons() {
-            const colors = ['#e91e63', '#2196F3', '#4CAF50', '#FFC107', '#9C27B0', '#00BCD4'];
-            const balloonContainer = document.getElementById('birthdayContent');
-            
-            for (let i = 0; i < 8; i++) {
-                const balloon = document.createElement('div');
-                balloon.className = 'balloon';
-                balloon.style.backgroundColor = colors[i % colors.length];
-                balloon.style.left = Math.random() * 80 + 10 + '%';
-                balloon.style.top = Math.random() * 30 + '%';
-                balloon.style.animation = `float ${Math.random() * 3 + 4}s ease-in-out infinite`;
-                balloon.style.animationDelay = i * 0.3 + 's';
-                balloon.style.opacity = '0.7';
-                balloonContainer.appendChild(balloon);
-            }
-        }
-
-        function createConfetti() {
-            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', 
-                          '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', 
-                          '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
-            
-            for (let i = 0; i < 150; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = Math.random() * 10 + 5 + 'px';
-                confetti.style.animation = `confetti ${Math.random() * 3 + 2}s linear forwards`;
-                confetti.style.animationDelay = Math.random() * 2 + 's';
-                document.body.appendChild(confetti);
-                
-                setTimeout(() => {
-                    confetti.remove();
-                }, 5000);
-            }
-        }
     </script>
 </body>
 </html>
