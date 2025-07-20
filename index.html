@@ -81,8 +81,20 @@
   <button onclick="startTimer()">Start</button>
   <button onclick="pauseTimer()">Pause</button>
   <button onclick="resetTimer()">Reset</button>
-
+  <div>
+    <button onclick="toggleFullScreen()">Fullscreen</button>
+  </div>
+  
   <script>
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch((err) => {
+          alert(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
     const timerDisplay = document.getElementById('timer');
     let totalTimeSec = 0;
     let interval = null;
