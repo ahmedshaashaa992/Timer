@@ -65,7 +65,47 @@
       z-index: -1;
       background: #000;
     }
+    .signature {
+      margin-top: 30px;
+      font-style: italic;
+      color: #666;
+    }
+    select {
+      font-size: 22px;
+      padding: 12px 20px;
+      border: 2px solid #ff3b3f;
+      border-radius: 8px;
+      background-color: #111;
+      color: #fff;
+      text-align: center;
+      width: 240px;
+      margin-bottom: 15px;
+    }
+    .music-control {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: rgba(255, 59, 63, 0.7);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .music-control:hover {
+      background-color: rgba(255, 59, 63, 0.9);
+      transform: scale(1.1);
+    }
+    .music-control i {
+      color: white;
+      font-size: 20px;
+    }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <canvas id="bgCanvas"></canvas>
 
@@ -74,6 +114,18 @@
   <h2 id="timer">00:00</h2>
 
   <div id="controls">
+    <select id="timeSelect">
+      <option value="">Custom time</option>
+      <option value="300">5 minutes</option>
+      <option value="600">10 minutes</option>
+      <option value="900">15 minutes</option>
+      <option value="1200">20 minutes</option>
+      <option value="1500">25 minutes</option>
+      <option value="1800">30 minutes</option>
+      <option value="2700">45 minutes</option>
+      <option value="3600">60 minutes</option>
+    </select>
+    <br />
     <input type="text" id="timerInput" placeholder="Enter MM or MM:SS" />
     <br />
   </div>
@@ -85,7 +137,39 @@
     <button onclick="toggleFullScreen()">Fullscreen</button>
   </div>
   
+  <div class="signature">Created by Ahmed Shaashaa</div>
+  
+  <!-- Music control -->
+  <div class="music-control" id="musicControl" title="Background music">
+    <i class="fas fa-music"></i>
+  </div>
+  
+  <!-- Audio element for the relaxing song -->
+  <audio id="backgroundMusic" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  
   <script>
+    // Music control
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    const musicControl = document.getElementById('musicControl');
+    let isMusicPlaying = false;
+    
+    // Set volume to 30% to be relaxing and not intrusive
+    backgroundMusic.volume = 0.3;
+    
+    musicControl.addEventListener('click', function() {
+      if (isMusicPlaying) {
+        backgroundMusic.pause();
+        musicControl.innerHTML = '<i class="fas fa-music"></i>';
+      } else {
+        backgroundMusic.play();
+        musicControl.innerHTML = '<i class="fas fa-pause"></i>';
+      }
+      isMusicPlaying = !isMusicPlaying;
+    });
+    
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch((err) => {
@@ -95,6 +179,7 @@
         document.exitFullscreen();
       }
     }
+    
     const timerDisplay = document.getElementById('timer');
     let totalTimeSec = 0;
     let interval = null;
@@ -105,7 +190,6 @@
       const sec = String(secs).padStart(2, '0');
       timerDisplay.textContent = `${mins}:${sec}`;
 
-      // Only update the input field if the timer is running or paused
       if (interval || isPaused) {
         const input = document.getElementById('timerInput');
         input.value = `${mins}:${sec}`;
@@ -113,6 +197,13 @@
     }
 
     function counter() {
+      // Start playing music when timer starts (if not already playing)
+      if (!isMusicPlaying && backgroundMusic.paused) {
+        backgroundMusic.play();
+        musicControl.innerHTML = '<i class="fas fa-pause"></i>';
+        isMusicPlaying = true;
+      }
+      
       interval = setInterval(() => {
         const min = Math.floor(totalTimeSec / 60);
         const sec = totalTimeSec % 60;
@@ -126,6 +217,13 @@
           isPaused = false;
           document.getElementById('controls').style.display = "block";
           document.getElementById('timerInput').disabled = false;
+          
+          // Pause music when timer completes
+          if (isMusicPlaying) {
+            backgroundMusic.pause();
+            musicControl.innerHTML = '<i class="fas fa-music"></i>';
+            isMusicPlaying = false;
+          }
         }
       }, 1000);
     }
@@ -133,21 +231,26 @@
     function startTimer() {
       if (!interval) {
         const input = document.getElementById('timerInput');
-
+        const timeSelect = document.getElementById('timeSelect');
+        
         if (!isPaused) {
-          let value = input.value.trim();
-
-          if (value.includes(':')) {
-            const [m, s] = value.split(':').map(Number);
-            totalTimeSec = m * 60 + (s || 0);
+          if (timeSelect.value) {
+            totalTimeSec = parseInt(timeSelect.value);
           } else {
-            totalTimeSec = parseInt(value) * 60;
+            let value = input.value.trim();
+            if (value.includes(':')) {
+              const [m, s] = value.split(':').map(Number);
+              totalTimeSec = m * 60 + (s || 0);
+            } else {
+              totalTimeSec = parseInt(value) * 60;
+            }
           }
 
           document.getElementById('controls').style.display = "none";
         }
 
         input.disabled = true;
+        timeSelect.disabled = true;
         counter();
       }
     }
@@ -168,10 +271,30 @@
       totalTimeSec = 0;
       updateDisplay(0, 0);
       const input = document.getElementById('timerInput');
+      const timeSelect = document.getElementById('timeSelect');
       input.disabled = false;
+      timeSelect.disabled = false;
       input.value = '';
+      timeSelect.value = '';
       document.getElementById('controls').style.display = "block";
+      
+      // Pause music when resetting
+      if (isMusicPlaying) {
+        backgroundMusic.pause();
+        musicControl.innerHTML = '<i class="fas fa-music"></i>';
+        isMusicPlaying = false;
+      }
     }
+
+    document.getElementById('timeSelect').addEventListener('change', function() {
+      if (this.value) {
+        document.getElementById('timerInput').value = '';
+        totalTimeSec = parseInt(this.value);
+        const min = Math.floor(totalTimeSec / 60);
+        const sec = totalTimeSec % 60;
+        updateDisplay(min, sec);
+      }
+    });
 
     // Initial state
     updateDisplay(0, 0);
